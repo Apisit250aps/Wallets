@@ -24,6 +24,6 @@ urlpatterns = [
     path('transaction/read', api.readTransaction),
     
     path('wallet/create', api.createWallet),
-    path('wallet/read', api.readWallet),
+    path('wallet/read', api.readWallet, name='read-wallet-api'),
     
 ]
