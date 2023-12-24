@@ -16,6 +16,7 @@ from django.db.models import Q
 from datetime import datetime
 
 from . import models
+from . import serializers
 
 from rest_framework.status import (
     HTTP_200_OK,
@@ -54,7 +55,7 @@ def createTransaction(request):
 
         # Create transactions
         try:
-            
+
             models.Transaction.objects.create(
                 wallet=wallet,
                 name=name,
@@ -64,7 +65,7 @@ def createTransaction(request):
                 remark=remark,
                 writer=writer
             )
-            
+
             http_status = HTTP_201_CREATED
 
         except IOError as err:
@@ -74,3 +75,62 @@ def createTransaction(request):
         http_status = HTTP_401_UNAUTHORIZED
 
     return Response(status=http_status)
+
+
+@csrf_exempt
+@api_view(["GET", ])
+@permission_classes((AllowAny,))
+def readTransaction(request):
+
+    http_status = HTTP_200_OK
+
+    transactionQuery = models.Transaction.objects.all()
+    transactionSerializer = serializers.TransactionSerializers(
+        transactionQuery, many=True)
+
+    return Response(
+        data={
+            "transaction": transactionSerializer.data
+        },
+        status=http_status
+    )
+
+
+@csrf_exempt
+@api_view(["POST", ])
+@permission_classes((AllowAny,))
+def createWallet(request):
+    http_status = HTTP_200_OK
+
+    name = request.data['name']
+    desc = request.data['desc']
+
+    try:
+        models.Wallet.objects.create(
+            name=name,
+            desc=desc
+        )
+        http_status = HTTP_201_CREATED
+    except:
+        http_status = HTTP_400_BAD_REQUEST
+
+    return Response(status=http_status)
+
+
+@csrf_exempt
+@api_view(["GET", ])
+@permission_classes((AllowAny,))
+def readWallet(request):
+    http_status = HTTP_200_OK
+
+    walletQuery = models.Wallet.objects.all()
+    walletSerializer = serializers.WalletSerializers(
+        walletQuery, many=True)
+
+    return Response(
+        data={
+            "wallet": walletSerializer.data
+        },
+        status=http_status
+    )
+

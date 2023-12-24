@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+<main id="app">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div>
+                Some text as placeholder. In real life you can have the elements you have chosen. Like, text,
+                images, lists, etc.
+            </div>
+            <div class="dropdown mt-3">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    Dropdown button
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <section id="header" class=" shadow-sm bg-warning text-dark py-3 sticky-top">
+        <!-- container -->
+        <div class="container pt-3">
+            <!-- head -->
+            <div class="d-flex flex-row justify-content-between align-items-center mt-3">
+                <a href="" class="btn px-0 fw-semibold text-uppercase">
+                    <i class='bx-fw bx bx-user bx-md'></i>admin
+                </a>
+                <button class="btn px-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
+                    aria-controls="offcanvasExample">
+                    <i class="bx bx-md bx-menu"></i>
+                </button>
+            </div>
+            <!-- header -->
+            <!-- balance -->
+            <div class="row row-cols-1 row-cols-lg-2 mx-auto p-0 g-1 mt-3 text-white">
+                <div class="col p-0">
+                    <div class="row row-cols-2 mx-auto p-0 g-0">
+                        <div class="col pe-1 ps-0">
+                            <div class="rounded-3 bg-dark balance" style="height: 60px;">
+                                <i class='bx-md bx bx-money-withdraw'></i>
+                                <span class="fw-semibold fs-3">500 ฿</span>
+                            </div>
+                        </div>
+                        <div class="col ps-1 pe-0 pe-lg-1">
+                            <div class="rounded-3 bg-dark balance" style="height: 60px;">
+                                <i class='bx-md bx bx-money'></i>
+                                <span class="fw-semibold fs-3">500 ฿</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col p-0 ps-lg-1">
+                    <div class="rounded-3 bg-dark balance" style="height: 60px;">
+                        <i class='bx bx-wallet-alt bx-md'></i>
+                        <span class="fw-semibold fs-3">500 ฿</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end container -->
+
+    </section>
+</main>
+{% endblock content %}
+<!--  -->
+{% block script %}
+<script>
+    const { createApp } = Vue;
+    const app = createApp(
+        {
+
+        }
+    );
+    app.mount('#app')
+</script>
+{% endblock script %}
