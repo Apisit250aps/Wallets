@@ -10,6 +10,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.staticfiles import finders
 
+from django.db.models import Sum
+
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 
@@ -110,10 +112,28 @@ def readTransactionId(request):
         wallet=id).order_by('-created_at')
     transactionSerializer = serializers.TransactionSerializers(
         transactionQuery, many=True)
+    
+    expenses = 0
+    income = 0
+    balance = 0
+    
+    for item in transactionQuery:
+        
+        if item.type == 1:
+            income += item.amount
+        else :
+            expenses += item.amount
+        
+        balance += (item.amount * item.type)
 
     return Response(
         data={
-            "transaction": transactionSerializer.data
+            "transaction": transactionSerializer.data,
+            "amount":{
+                "expenses":expenses,
+                "income":income,
+                "balance":balance
+            }
         },
         status=http_status
     )
@@ -151,21 +171,41 @@ def readWallet(request):
     walletQuery = models.Wallet.objects.all()
     walletSerializer = serializers.WalletSerializers(
         walletQuery, many=True)
-
+    
+    cash = 0
+    bank = 0
     walletData = []
 
     for item in walletSerializer.data:
         item = dict(item)
         transactionQuery = models.Transaction.objects.filter(
-            id=int(item['id']))
+            wallet=int(item['id']))
         transactionSerializer = serializers.TransactionSerializers(
             transactionQuery, many=True).data
         item['transaction'] = transactionSerializer
+        amount = 0
+        
+        for transaction in transactionQuery:
+            amount += transaction.amount * transaction.type
+            
+        if item['type'] == 1:
+            cash += amount
+        else :
+            bank += amount
+            
+        item['amount'] = amount
         walletData.append(item)
 
+    total = bank + cash
+    
     return Response(
         data={
-            "wallet": walletData
+            "wallet": walletData,
+            "process":{
+                "cash":cash,
+                "bank":bank,
+                "total":total
+            }
         },
         status=http_status
     )

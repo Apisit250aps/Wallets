@@ -8,8 +8,7 @@
         </div>
         <div class="offcanvas-body">
             <div>
-                Some text as placeholder. In real life you can have the elements you have chosen. Like, text,
-                images, lists, etc.
+                "เก็บเงินเพื่อความมั่นคง ดีกว่าเก็บเงินเพื่อฟุ่มเฟือย"
             </div>
             {% if not user.is_authenticated %}
             <button type="button" class="btn fw-semibold btn-dark text-uppercase w-100 mt-3" data-bs-toggle="modal"
@@ -68,16 +67,15 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" name="" id="" class="form-control form-control-lg mt-3" placeholder="Name" v-model="name">
+                    <input type="text" name="" id="" class="form-control form-control-lg mt-3" placeholder="Name"
+                        v-model="name">
                     <select class="form-select form-select-lg mt-3" v-model="type">
                         <option value="1">เงินสด</option>
                         <option value="2">บัญชี</option>
                         <option value="3">ผสม</option>
                     </select>
-                    <textarea name="" id="" cols="30" rows="3" class="form-control mt-3"
-                        placeholder="Description" v-model="desc"></textarea>
-
-
+                    <textarea name="" id="" cols="30" rows="3" class="form-control mt-3" placeholder="Description"
+                        v-model="desc"></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -110,14 +108,14 @@
                     <div class="row row-cols-2 mx-auto p-0 g-0">
                         <div class="col pe-1 ps-0">
                             <div class="rounded-3 bg-dark balance" style="height: 60px;">
-                                <i class='bx-md bx bx-money-withdraw'></i>
-                                <span class="fw-semibold fs-3">500 ฿</span>
+                                <i class='bx-md bx bx-money'></i>
+                                <span class="fw-semibold fs-3">[{process.cash}] ฿</span>
                             </div>
                         </div>
                         <div class="col ps-1 pe-0 pe-lg-1">
                             <div class="rounded-3 bg-dark balance" style="height: 60px;">
-                                <i class='bx-md bx bx-money'></i>
-                                <span class="fw-semibold fs-3">500 ฿</span>
+                                <i class='bx-md bx bxs-bank'></i>
+                                <span class="fw-semibold fs-3">[{process.bank}] ฿</span>
                             </div>
                         </div>
                     </div>
@@ -125,7 +123,7 @@
                 <div class="col p-0 ps-lg-1">
                     <div class="rounded-3 bg-dark balance" style="height: 60px;">
                         <i class='bx bx-coin-stack bx-md'></i>
-                        <span class="fw-semibold fs-3">500 ฿</span>
+                        <span class="fw-semibold fs-3">[{process.total}] ฿</span>
                     </div>
                 </div>
             </div>
@@ -149,7 +147,7 @@
                                 <span v-if="item.type == 3" class=" badge bg-danger">ผสม</span>
                             </div>
                             <div class="col-5">
-                                <h3 class="text-end fw-semibold">5000 ฿</h3>
+                                <h3 class="text-end fw-semibold">[{item.amount}] ฿</h3>
                             </div>
                         </div>
                     </div>
@@ -180,6 +178,11 @@
                     username_isValid: true,
                     password: "",
                     password_isValid: true,
+                    process: {
+                        cash: 0,
+                        bank: 0,
+                        total: 0
+                    },
 
                     name: "",
                     type: 1,
@@ -200,6 +203,7 @@
                 ).then((response) => {
                     if (response.status == 200) {
                         this.wallets = response.data['wallet'];
+                        this.process = response.data['process']
                     }
                 });
             },
