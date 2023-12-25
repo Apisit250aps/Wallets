@@ -1,10 +1,12 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from django.contrib.auth import authenticate, login
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.staticfiles import finders
 
@@ -43,16 +45,17 @@ def createTransaction(request):
 
     # status
     http_status = HTTP_200_OK
-
+    
     # Check User
     try:
         writer = User.objects.get(id=request.session['_auth_user_id']).username
         # fix value
         if date == "":
             date = datetime.now()
-
+        else :
+            date=date.replace('T', ' ')
+            
         wallet = models.Wallet.objects.get(id=int(wallet))
-
         # Create transactions
         try:
 
@@ -95,6 +98,7 @@ def readTransaction(request):
         status=http_status
     )
 
+
 @csrf_exempt
 @api_view(["POST", ])
 @permission_classes((AllowAny,))
@@ -102,7 +106,8 @@ def readTransactionId(request):
 
     http_status = HTTP_200_OK
     id = int(request.data['id'])
-    transactionQuery = models.Transaction.objects.filter(wallet=id).order_by('-created_at')
+    transactionQuery = models.Transaction.objects.filter(
+        wallet=id).order_by('-created_at')
     transactionSerializer = serializers.TransactionSerializers(
         transactionQuery, many=True)
 
@@ -121,12 +126,14 @@ def createWallet(request):
     http_status = HTTP_200_OK
 
     name = request.data['name']
+    type = int(request.data['type'])
     desc = request.data['desc']
 
     try:
         models.Wallet.objects.create(
             name=name,
-            desc=desc
+            desc=desc,
+            type=type
         )
         http_status = HTTP_201_CREATED
     except:
@@ -144,13 +151,15 @@ def readWallet(request):
     walletQuery = models.Wallet.objects.all()
     walletSerializer = serializers.WalletSerializers(
         walletQuery, many=True)
-    
+
     walletData = []
-    
+
     for item in walletSerializer.data:
         item = dict(item)
-        transactionQuery = models.Transaction.objects.filter(id=int(item['id']))
-        transactionSerializer = serializers.TransactionSerializers(transactionQuery, many=True).data
+        transactionQuery = models.Transaction.objects.filter(
+            id=int(item['id']))
+        transactionSerializer = serializers.TransactionSerializers(
+            transactionQuery, many=True).data
         item['transaction'] = transactionSerializer
         walletData.append(item)
 
@@ -160,4 +169,48 @@ def readWallet(request):
         },
         status=http_status
     )
+
+
+@csrf_exempt
+@api_view(["POST",])
+@permission_classes((AllowAny,))
+def userLogin(request):
+    http_status = HTTP_200_OK
+    username = request.data['username']
+    password = request.data['password']
+
+    user = authenticate(
+        username=username,
+        password=password
+    )
+
+    if user is not None:
+        if user.is_active:
+            status = True
+            msg = 'user is logined'
+            login(request, user)
+        else:
+            status = False
+            msg = 'Currently, This user is not active'
+            http_status = HTTP_401_UNAUTHORIZED
+    else:
+        status = False
+        msg = 'Error wrong username/password'
+        http_status = HTTP_400_BAD_REQUEST
+
+    return Response({'status': status, 'message': msg}, status=http_status)
+
+
+
+def userLogout(request):
+    logout(request)
+    return redirect('index-page')
+
+def indexPage(request):
+    return render(request, 'index.html', )
+
+def walletPage(request, id):
+    wallet = models.Wallet.objects.get(id=id)
+    
+    return render(request, 'wallet.html', {"wallet": wallet})
 

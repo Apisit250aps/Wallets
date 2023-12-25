@@ -20,11 +20,17 @@ from django.urls import path
 from . import views as api
 
 urlpatterns = [
-    path('transaction/create', api.createTransaction),
+    
+    path('transaction/create', api.createTransaction, name='create-transaction-api'),
     path('transaction/read', api.readTransaction),
     path('transaction/read-id', api.readTransactionId, name='read-id-transaction-api'),
     
-    path('wallet/create', api.createWallet),
+    path('wallet/create', api.createWallet, name="create-wallet-api"),
     path('wallet/read', api.readWallet, name='read-wallet-api'),
+    
+    
+    path('auth/login', api.userLogin, name='login-api'),
+    
+    
     
 ]

@@ -3,7 +3,7 @@
 <main id="app">
     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Wallets</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
@@ -11,16 +11,79 @@
                 Some text as placeholder. In real life you can have the elements you have chosen. Like, text,
                 images, lists, etc.
             </div>
-            <div class="dropdown mt-3">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    Dropdown button
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-            </div>
+            {% if not user.is_authenticated %}
+            <button type="button" class="btn fw-semibold btn-dark text-uppercase w-100 mt-3" data-bs-toggle="modal"
+                data-bs-target="#exampleModal" ref="modal-login">
+                <i class='bx-fw bx bx-log-in'></i>Login
+            </button>
+            {% else %}
+            <button type="button" class="btn fw-semibold btn-warning text-capitalize w-100 mt-3" data-bs-toggle="modal"
+                data-bs-target="#newWallet">
+                <i class='bx-fw bx bx-wallet'></i>New Wallet
+            </button>
+            <a href="{% url 'logout' %}" class="btn fw-semibold btn-outline-danger text-uppercase w-100 mt-3">
+                <i class='bx-fw bx bx-log-out'></i>Logout
+            </a>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!-- Modal login -->
+
+    <!--  -->
+    <div class="modal fade modal-md" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Login as Admin</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="floatingInput" placeholder="Username"
+                            v-model="username">
+                        <label for="floatingInput">Username</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
+                            v-model="password">
+                        <label for="floatingPassword">Password</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" @click="loginSubmit($event)" class="btn btn-dark">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade " id="newWallet" tabindex="-1" aria-labelledby="newWalletLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="newWalletLabel">Create new Wallet</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" name="" id="" class="form-control form-control-lg mt-3" placeholder="Name" v-model="name">
+                    <select class="form-select form-select-lg mt-3" v-model="type">
+                        <option value="1">เงินสด</option>
+                        <option value="2">บัญชี</option>
+                        <option value="3">ผสม</option>
+                    </select>
+                    <textarea name="" id="" cols="30" rows="3" class="form-control mt-3"
+                        placeholder="Description" v-model="desc"></textarea>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" @click="createWallet($event)" class="btn btn-primary">Create Wallet</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -29,7 +92,7 @@
         <div class="container pt-3">
             <!-- head -->
             <div class="d-flex flex-row justify-content-between align-items-center mt-3 text-dark">
-                <a href="" class="btn px-0 fw-semibold text-uppercase">
+                <a href="admin" class="btn px-0 fw-semibold text-uppercase">
                     <i class='bx-fw bx bx-user bx-md'></i>[{name}]
                 </a>
                 <button class="btn px-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
@@ -100,6 +163,10 @@
 <!--  -->
 {% block script %}
 <script>
+
+
+
+
     const { createApp } = Vue;
     const app = createApp(
         {
@@ -108,9 +175,23 @@
                 return {
                     name: "admin",
                     wallets: null,
+
+                    username: "",
+                    username_isValid: true,
+                    password: "",
+                    password_isValid: true,
+
+                    name: "",
+                    type: 1,
+                    desc: "",
+
+                    isValid: true
                 };
             },
             mounted() {
+                {% if not user.is_authenticated %}
+                this.$refs['modal-login'].click();
+                {% endif %}
                 axios(
                     {
                         method: "get",
@@ -122,8 +203,77 @@
                     }
                 });
             },
-            methods:{
-                
+            methods: {
+                loginSubmit(e) {
+                    e.preventDefault();
+
+                    this.isValid = true;
+                    this.username_isValid = true;
+                    if (this.username == "") {
+                        this.username_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.password_isValid = true;
+                    if (this.password == "") {
+                        this.password_isValid = false;
+                        this.isValid = false;
+                    }
+
+                    if (this.isValid) {
+                        const form_data = new FormData;
+                        form_data.append("csrfmiddlewaretoken", "{{ csrf_token }}");
+                        form_data.append('username', this.username);
+                        form_data.append("password", this.password);
+                        axios(
+                            {
+                                method: "post",
+                                url: "{% url 'login-api' %}",
+                                data: form_data
+                            }
+                        )
+                            .then((response) => {
+                                if (response.status == 200) {
+                                    location.reload();
+                                }
+                            });
+                    }
+                },
+                createWallet(e) {
+                    e.preventDefault();
+
+                    let isValid = true;
+                    if (this.name == "") {
+                        isValid = false;
+                    }
+
+                    if (isValid) {
+                        const form_data = new FormData;
+                        form_data.append("csrfmiddlewaretoken", "{{ csrf_token }}");
+                        form_data.append("name", this.name);
+                        form_data.append("type", this.type);
+                        form_data.append("desc", this.desc);
+
+                        axios(
+                            {
+                                method: "post",
+                                url: "{% url 'create-wallet-api' %}",
+                                data: form_data
+                            }
+                        )
+                            .then((response) => {
+                                if (response.status == 201) {
+                                    Swal.fire({
+                                        title: "Created!",
+                                        text: "Create Wallet success!",
+                                        icon: "success"
+                                    });
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 1000);
+                                }
+                            });
+                    }
+                }
             }
         }
     );
