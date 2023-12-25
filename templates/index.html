@@ -76,7 +76,7 @@
                     <div class="col ">
                         <div class="row mx-auto py-3 g-0">
                             <div class="col-5">
-                                <a href="" class="nav-link" style="white-space: nowrap;">
+                                <a :href="`wallet/${item.id}`" class="nav-link" style="white-space: nowrap;">
                                     <i class='bx-fw bx-wallet bx bx-md'></i>[{item.name}]
                                 </a>
                             </div>
@@ -91,7 +91,6 @@
                         </div>
                     </div>
                     <hr>
-
                 </div>
             </div>
         </div>
@@ -122,6 +121,9 @@
                         this.wallets = response.data['wallet'];
                     }
                 });
+            },
+            methods:{
+                
             }
         }
     );

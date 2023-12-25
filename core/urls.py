@@ -18,8 +18,12 @@ from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import render
 
+from pocket import models
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('pocket.urls')),
-    path('', lambda request : render(request, 'index.html'), name='index-page')
+    path('', lambda request: render(request, 'index.html'), name='index-page'),
+    path('wallet/<int:id>', lambda request,
+         id: render(request, 'wallet.html', {"wallet": models.Wallet.objects.get(id=id)}), name='wallet-page')
 ]

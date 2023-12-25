@@ -95,6 +95,24 @@ def readTransaction(request):
         status=http_status
     )
 
+@csrf_exempt
+@api_view(["POST", ])
+@permission_classes((AllowAny,))
+def readTransactionId(request):
+
+    http_status = HTTP_200_OK
+    id = int(request.data['id'])
+    transactionQuery = models.Transaction.objects.filter(wallet=id).order_by('-created_at')
+    transactionSerializer = serializers.TransactionSerializers(
+        transactionQuery, many=True)
+
+    return Response(
+        data={
+            "transaction": transactionSerializer.data
+        },
+        status=http_status
+    )
+
 
 @csrf_exempt
 @api_view(["POST", ])
@@ -126,10 +144,19 @@ def readWallet(request):
     walletQuery = models.Wallet.objects.all()
     walletSerializer = serializers.WalletSerializers(
         walletQuery, many=True)
+    
+    walletData = []
+    
+    for item in walletSerializer.data:
+        item = dict(item)
+        transactionQuery = models.Transaction.objects.filter(id=int(item['id']))
+        transactionSerializer = serializers.TransactionSerializers(transactionQuery, many=True).data
+        item['transaction'] = transactionSerializer
+        walletData.append(item)
 
     return Response(
         data={
-            "wallet": walletSerializer.data
+            "wallet": walletData
         },
         status=http_status
     )

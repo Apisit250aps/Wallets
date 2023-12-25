@@ -22,6 +22,7 @@ from . import views as api
 urlpatterns = [
     path('transaction/create', api.createTransaction),
     path('transaction/read', api.readTransaction),
+    path('transaction/read-id', api.readTransactionId, name='read-id-transaction-api'),
     
     path('wallet/create', api.createWallet),
     path('wallet/read', api.readWallet, name='read-wallet-api'),
