@@ -109,7 +109,7 @@ def readTransactionId(request):
     http_status = HTTP_200_OK
     id = int(request.data['id'])
     transactionQuery = models.Transaction.objects.filter(
-        wallet=id).order_by('-created_at')
+        wallet=id).order_by('-date')
     transactionSerializer = serializers.TransactionSerializers(
         transactionQuery, many=True)
     
