@@ -24,7 +24,7 @@ from rest_framework.response import Response
 from pocket import models, views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin-page'),
     path('api/', include('pocket.urls')),
     path('', views.indexPage, name='index-page'),
     path('wallet/<int:id>', views.walletPage, name='wallet-page'),
