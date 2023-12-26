@@ -12,15 +12,15 @@
             </div>
             {% if not user.is_authenticated %}
             <button type="button" class="btn fw-semibold btn-dark text-uppercase w-100 mt-3" data-bs-toggle="modal"
-                data-bs-target="#exampleModal" ref="modal-login">
+                data-bs-target="#exampleModal" ref="modal-login" name="login-btn">
                 <i class='bx-fw bx bx-log-in'></i>Login
             </button>
             {% else %}
             <button type="button" class="btn fw-semibold btn-warning text-dark text-capitalize w-100 mt-3"
-                data-bs-toggle="modal" data-bs-target="#transaction">
+                data-bs-toggle="modal" data-bs-target="#transaction" name="create-transaction-btn">
                 <i class='bx-fw bx bx-plus'></i>Transaction
             </button>
-            <a href="{% url 'logout' %}" class="btn fw-semibold btn-outline-danger text-uppercase w-100 mt-3">
+            <a href="{% url 'logout' %}" class="btn fw-semibold btn-outline-danger text-uppercase w-100 mt-3" name="logout-btn">
                 <i class='bx-fw bx bx-log-out'></i>Logout
             </a>
             {% endif %}
@@ -71,7 +71,7 @@
                 {% endif %}
                     
                 <button class="btn px-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
-                    aria-controls="offcanvasExample">
+                    aria-controls="offcanvasExample" name="menu-btn">
                     <i class="bx bx-md bx-menu"></i>
                 </button>
             </div>
