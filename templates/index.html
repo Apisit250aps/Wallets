@@ -67,14 +67,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" name="" id="" class="form-control form-control-lg mt-3" placeholder="Name"
+                    <input type="text" class="form-control form-control-lg mt-3" placeholder="Name"
                         v-model="name">
                     <select class="form-select form-select-lg mt-3" v-model="type">
                         <option value="1">เงินสด</option>
                         <option value="2">บัญชี</option>
                         <option value="3">ผสม</option>
                     </select>
-                    <textarea name="" id="" cols="30" rows="3" class="form-control mt-3" placeholder="Description"
+                    <textarea cols="30" rows="3" class="form-control mt-3" placeholder="Description"
                         v-model="desc"></textarea>
                 </div>
                 <div class="modal-footer">
@@ -144,7 +144,7 @@
                         <div class="row mx-auto py-3 g-0">
                             <div class="col-7">
                                 <a :href="`wallet/${item.id}`" class="nav-link fs-6" style="white-space: nowrap;">
-                                    <i class='bx-fw bx-wallet bx bx-md'></i>[{item.name}]
+                                    <i class='bx-fw bx-wallet bx'></i>[{item.name}]
                                 </a>
                             </div>
                             <div class="col-2">
